@@ -134,14 +134,5 @@ def delete_loan(loan_id: int):
     db.session.delete(loan)
     db.session.commit()
     return jsonify({"message": f"Loan id: {loan_id}, successfully deleted."}), 200
-
-@books_bp.route("/popular", methods=["GET"])
-def popular_books():
-   query = select(Books)
-   books = db.session.execute(query).scalars().all()
-   
-   for book in books:
-       print(book.title, book.loans)
-   print(books)
    
    

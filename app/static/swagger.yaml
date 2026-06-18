@@ -1,0 +1,508 @@
+swagger: "2.0"
+info:
+  title: "Library API"
+  description: "API for managing members, books, and loans."
+  version: "1.0.0"
+host: "127.0.0.1:5000"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+tags:
+  - name: "Members"
+    description: "Member account and authentication endpoints"
+  - name: "Books"
+    description: "Book catalog endpoints"
+  - name: "Loans"
+    description: "Loan management endpoints"
+
+paths:
+  /members/login:
+    post:
+      tags:
+        - "Members"
+      summary: "Login and get token"
+      description: "Validates member credentials and returns an auth token."
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Login credentials"
+          schema:
+            $ref: "#/definitions/LoginRequest"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        400:
+          description: "Invalid payload"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: "Invalid email or password"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /members:
+    get:
+      tags:
+        - "Members"
+      summary: "Get all members"
+      description: "Returns a list of all members."
+      responses:
+        200:
+          description: "Members retrieved"
+          schema:
+            $ref: "#/definitions/MembersList"
+
+    post:
+      tags:
+        - "Members"
+      summary: "Create member"
+      description: "Creates a new member. Email must be unique."
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Member payload"
+          schema:
+            $ref: "#/definitions/MemberPayload"
+      responses:
+        201:
+          description: "Member created"
+          schema:
+            $ref: "#/definitions/Member"
+        400:
+          description: "Validation error or duplicate email"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /members/{member_id}:
+    get:
+      tags:
+        - "Members"
+      summary: "Get member by ID"
+      parameters:
+        - in: "path"
+          name: "member_id"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Member retrieved"
+          schema:
+            $ref: "#/definitions/Member"
+        404:
+          description: "Member not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - "Members"
+      summary: "Update member by ID"
+      parameters:
+        - in: "path"
+          name: "member_id"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Updated member payload"
+          schema:
+            $ref: "#/definitions/MemberPayload"
+      responses:
+        200:
+          description: "Member updated"
+          schema:
+            $ref: "#/definitions/Member"
+        400:
+          description: "Validation error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "Member not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - "Members"
+      summary: "Delete member by ID"
+      parameters:
+        - in: "path"
+          name: "member_id"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Member deleted"
+          schema:
+            $ref: "#/definitions/DeleteMessage"
+        404:
+          description: "Member not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /books:
+    get:
+      tags:
+        - "Books"
+      summary: "Get all books"
+      responses:
+        200:
+          description: "Books retrieved"
+          schema:
+            $ref: "#/definitions/BooksList"
+
+    post:
+      tags:
+        - "Books"
+      summary: "Create book"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Book payload"
+          schema:
+            $ref: "#/definitions/BookPayload"
+      responses:
+        201:
+          description: "Book created"
+          schema:
+            $ref: "#/definitions/Book"
+        400:
+          description: "Validation error or duplicate book"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /books/{book_id}:
+    get:
+      tags:
+        - "Books"
+      summary: "Get book by ID"
+      parameters:
+        - in: "path"
+          name: "book_id"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Book retrieved"
+          schema:
+            $ref: "#/definitions/Book"
+        404:
+          description: "Book not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - "Books"
+      summary: "Update book by ID"
+      parameters:
+        - in: "path"
+          name: "book_id"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Updated book payload"
+          schema:
+            $ref: "#/definitions/BookPayload"
+      responses:
+        200:
+          description: "Book updated"
+          schema:
+            $ref: "#/definitions/Book"
+        400:
+          description: "Validation error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "Book not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - "Books"
+      summary: "Delete book by ID"
+      parameters:
+        - in: "path"
+          name: "book_id"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Book deleted"
+          schema:
+            $ref: "#/definitions/DeleteMessage"
+        404:
+          description: "Book not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /loans:
+    get:
+      tags:
+        - "Loans"
+      summary: "Get all loans"
+      responses:
+        200:
+          description: "Loans retrieved"
+          schema:
+            $ref: "#/definitions/LoansList"
+
+    post:
+      tags:
+        - "Loans"
+      summary: "Create loan"
+      description: "Creates a loan for a member and optional book IDs."
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Loan payload"
+          schema:
+            $ref: "#/definitions/LoanCreatePayload"
+      responses:
+        201:
+          description: "Loan created"
+          schema:
+            $ref: "#/definitions/Loan"
+        400:
+          description: "Validation error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "Member not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /loans/{loan_id}:
+    get:
+      tags:
+        - "Loans"
+      summary: "Get loan by ID"
+      parameters:
+        - in: "path"
+          name: "loan_id"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Loan retrieved"
+          schema:
+            $ref: "#/definitions/Loan"
+        404:
+          description: "Loan not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - "Loans"
+      summary: "Edit books in loan"
+      description: "Adds and/or removes books from an existing loan."
+      parameters:
+        - in: "path"
+          name: "loan_id"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Book IDs to add/remove"
+          schema:
+            $ref: "#/definitions/LoanEditPayload"
+      responses:
+        200:
+          description: "Loan updated"
+          schema:
+            $ref: "#/definitions/Loan"
+        400:
+          description: "Validation error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: "Loan not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - "Loans"
+      summary: "Delete loan by ID"
+      parameters:
+        - in: "path"
+          name: "loan_id"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Loan deleted"
+          schema:
+            $ref: "#/definitions/DeleteMessage"
+        404:
+          description: "Loan not found"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+definitions:
+  ErrorResponse:
+    type: "object"
+    properties:
+      error:
+        type: "string"
+      messages:
+        type: "string"
+
+  DeleteMessage:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  LoginRequest:
+    type: "object"
+    required:
+      - "email"
+      - "password"
+    properties:
+      email:
+        type: "string"
+        example: "member@example.com"
+      password:
+        type: "string"
+        example: "secret123"
+
+  LoginResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        example: "success"
+      message:
+        type: "string"
+        example: "Successfully Logged In"
+      auth_token:
+        type: "string"
+
+  MemberPayload:
+    type: "object"
+    required:
+      - "name"
+      - "email"
+      - "DOB"
+      - "password"
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      DOB:
+        type: "string"
+        format: "date"
+      password:
+        type: "string"
+
+  Member:
+    allOf:
+      - $ref: "#/definitions/MemberPayload"
+      - type: "object"
+        properties:
+          id:
+            type: "integer"
+
+  MembersList:
+    type: "array"
+    items:
+      $ref: "#/definitions/Member"
+
+  BookPayload:
+    type: "object"
+    required:
+      - "title"
+      - "author"
+      - "genre"
+      - "desc"
+    properties:
+      title:
+        type: "string"
+      author:
+        type: "string"
+      genre:
+        type: "string"
+      desc:
+        type: "string"
+
+  Book:
+    allOf:
+      - $ref: "#/definitions/BookPayload"
+      - type: "object"
+        properties:
+          id:
+            type: "integer"
+
+  BooksList:
+    type: "array"
+    items:
+      $ref: "#/definitions/Book"
+
+  LoanCreatePayload:
+    type: "object"
+    required:
+      - "loan_date"
+      - "member_id"
+    properties:
+      loan_date:
+        type: "string"
+        format: "date"
+      member_id:
+        type: "integer"
+      book_ids:
+        type: "array"
+        items:
+          type: "integer"
+
+  LoanEditPayload:
+    type: "object"
+    required:
+      - "add_book_ids"
+      - "remove_book_ids"
+    properties:
+      add_book_ids:
+        type: "array"
+        items:
+          type: "integer"
+      remove_book_ids:
+        type: "array"
+        items:
+          type: "integer"
+
+  Loan:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      loan_date:
+        type: "string"
+        format: "date"
+      member_id:
+        type: "integer"
+      books:
+        type: "array"
+        items:
+          type: "integer"
+
+  LoansList:
+    type: "array"
+    items:
+      $ref: "#/definitions/Loan"
