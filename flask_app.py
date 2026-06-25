@@ -1,13 +1,11 @@
 from app import create_app
-from app.models import db
 
-app = create_app("developmentConfig")
+app = create_app("ProductionConfig")  # Use the ProductionConfig for production environment
 
 @app.route('/hello')
 def hello():
     return {'message': 'Hello from Flask!'}
 
-with app.app_context():
-        db.create_all()
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

@@ -32,9 +32,7 @@ def create_app(config_name: str):
     app.register_blueprint(members_bp, url_prefix="/members")
     app.register_blueprint(book_bp, url_prefix="/books")
     app.register_blueprint(loan_bp, url_prefix="/loans")
-     app.register_blueprint(items_bp, url_prefix="/items")
-    app.register_blueprint(orders_bp, url_prefix="/orders")
-		app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL) #Registering our swagger blueprint
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
     
     
     return app
