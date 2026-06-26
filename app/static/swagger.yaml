@@ -3,9 +3,9 @@ info:
   title: "Library API"
   description: "API for managing members, books, and loans."
   version: "1.0.0"
-host: "127.0.0.1:5000"
+host: "library-backend-api-3.onrender.com"
 schemes:
-  - "http"
+  - "https"
 consumes:
   - "application/json"
 produces:
