@@ -33,6 +33,10 @@ def create_app(config_name: str):
     app.register_blueprint(book_bp, url_prefix="/books")
     app.register_blueprint(loan_bp, url_prefix="/loans")
     app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+    # Ensure core tables exist for first-time deployments.
+    with app.app_context():
+        db.create_all()
     
     
     return app
